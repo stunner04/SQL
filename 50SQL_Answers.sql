@@ -122,6 +122,28 @@ select * from worker where first_name like "%a";
 select * from worker where first_name like "%h" and length(first_name) = 6;
 select * from worker where first_name like "_____h";
 
+# Q19
+select * from worker where salary between 100000 and 500000;
+
+# Q20
+select * from worker where year(joining_date) = 2014 and month(joining_date) = 02;
+
+# Q21
+select department, count(worker_id) as NumberOfWorkersInAdmin from worker where department = "Admin";
+select department, count(*) as NumberOfWorkersInAdmin from worker where department = "Admin";
+
+# Q22
+select concat(first_name,' ',last_name) as FullName, salary  from worker where salary >= 50000 and salary <=100000;
+select concat(first_name,' ',last_name) as FullName, salary  from worker where salary between 50000 and 100000;
+
+# Q23
+select department, count(worker_id) as Count from worker group by department order by Count desc; 
+
+# Q24
+select worker_id as ID,first_name,last_name,worker_title from worker as w inner join title as t on w.worker_id = t.worker_ref_id where t.worker_title = "Manager";
+select w.* from worker as w inner join title as t on w.worker_id = t.worker_ref_id where t.worker_title = "Manager"; # manager at HR & Admin
+ 
+
  
  
  
