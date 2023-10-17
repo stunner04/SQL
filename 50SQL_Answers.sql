@@ -143,7 +143,63 @@ select department, count(worker_id) as Count from worker group by department ord
 select worker_id as ID,first_name,last_name,worker_title from worker as w inner join title as t on w.worker_id = t.worker_ref_id where t.worker_title = "Manager";
 select w.* from worker as w inner join title as t on w.worker_id = t.worker_ref_id where t.worker_title = "Manager"; # manager at HR & Admin
  
+# Q25
+select worker_title as Title , count(worker_title) as NumberOfTitles from title group by worker_title ; # now we filter the group have count > 1
+select worker_title as Title , count(worker_title) as NumberOfTitles from title group by worker_title having NumberOfTitles > 1;
 
+# Q26
+select * from worker where (worker_id % 2) = 1;
+select * from worker where mod(worker_id ,2) = 1;
+select * from worker where mod(worker_id ,2) <> 0;  # <> is behave as not equal to
+
+# Q27
+select * from worker where (worker_id % 2) = 0;
+select * from worker where mod(worker_id ,2) = 0; 
+
+# Q28
+
+-- One way to clone the table.
+create table new_worker as (select * from worker);
+select * from new_worker;
+select * from worker;
+
+-- Another way to clone the table.
+create table new_worker2 like worker;
+insert into new_worker2 (select * from worker);
+select * from new_worker2;
+
+# Q29
+
+-- select worker.* from worker as w inner join new_worker2 as w2 on w.worker_id = w2.worker_id;  # not working ?
+select worker.* from worker inner join new_worker2 on worker.worker_id = new_worker2.worker_id; 
+
+-- The USING clause is often favored for simplicity when joining on a single common column with the same name in both tables.
+select worker.* from worker inner join new_worker2 using(worker_id); # more preferred for same name columns
+
+# Q30 Exclusive Left Join & Minus Set operation
+select * from worker as w left join bonus as b on  w.worker_id = b.worker_ref_id where b.worker_ref_id is null; 
+select * from worker left join new_worker2 using(worker_id) where new_worker2.worker_id is null; 
+
+# Q31 Dual tables - Below functions give same results
+select current_date();
+select curdate();
+
+select current_time();
+select curtime();
+
+select current_timestamp();
+select now() as Time;
+
+select current_user();
+
+# Q32
+select * from worker order by salary desc limit 5;
+
+# Q33 
+-- The query starts from the 4th row in the sorted result set (which has the 4th highest salary).
+-- It then retrieves just one row after that (the 5th highest salary).
+
+select * from worker order by  salary desc limit 4,1;
  
  
  
