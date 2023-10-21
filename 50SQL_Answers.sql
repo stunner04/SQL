@@ -200,6 +200,75 @@ select * from worker order by salary desc limit 5;
 -- It then retrieves just one row after that (the 5th highest salary).
 
 select * from worker order by  salary desc limit 4,1;
+
+# Q35
+-- worker table can have more than 1 alias
+select * from worker w1, worker w2 where w1.salary = w2.salary and w1.worker_id <> w2.worker_id ;
+select w1.* from worker w1, worker w2 where w1.salary = w2.salary and w1.worker_id <> w2.worker_id ;
+
+# Q36 
+-- 2nd highest salary using sub query
+select max(salary)  from worker  where salary not in (select  max(salary) from worker );
+select max(salary) as SecHighestSal from worker where salary < (select max(salary) as HighestSal from worker);
+
+-- 3rd highest salary 
+select max(salary) as ThirdHighestSal from worker where salary < (select max(salary) as SecHighestSal from worker where salary < (select max(salary) as HighestSal from worker));
+
+# Q37
+select * from worker union select * from worker; -- Return unique rows 
+select * from worker union all select * from worker; -- Return duplicate rows 
+select * from worker union all select * from worker order by worker_id; 
+
+# Q38 
+
+SELECT w.worker_id AS WorkerID, b.bonus_amount AS BonusAmount
+FROM worker AS w
+left JOIN bonus AS b ON w.worker_id = b.worker_ref_id;
+
+-- Retrieve records where there is no corresponding bonus information (no matching record in the bonus table) for workers
+-- This WHERE clause filters the results to include only those rows where there is no matching bonus information (i.e., where b.worker_ref_id is NULL). 
+-- In other words, it retrieves records for workers who do not have corresponding bonus records.
+
+SELECT w.worker_id AS WorkerID, b.bonus_amount AS BonusAmount
+FROM worker AS w
+left JOIN bonus AS b ON w.worker_id = b.worker_ref_id
+WHERE b.worker_ref_id IS NULL;
+
+-- Using SubQueries
+select w.worker_id from worker as w where worker_id not in (select b.worker_ref_id from bonus as b);
+
+# Q39
+select * from worker where worker_id <= (select count(worker_id)/2 from worker);
+
+# Q40
+select department,count(department) as NumberOfPeople from worker group by department having NumberOfPeople < 4 ;
+
+# Q41
+select department as Department, count(department) as NumberOfPeople from worker group by department;
+
+# Q42
+select * from worker where worker_id = (select count(worker_id) from worker);
+select * from worker where worker_id = (select max(worker_id) from worker);
+
+# Q43
+select * from worker where worker_id = (select min(worker_id) from worker);
+
+# Q44
+(select * from worker order by worker_id desc limit 5) order by worker_id;
+
+# Q45 
+-- Concept of derived tble is used with joins and subquery concept
+
+select w.first_name, w.department, w.salary 
+from (select department as Department, max(salary) as MaxSal from worker group by department) temp
+inner join worker as w on temp.Department = w.department and temp.MaxSal = w.salary 
+order by w.salary desc;
+
+# Q49 
+select department as Department, sum(salary) as TotalDepSalary from worker group by department order by TotalDepSalary desc;
+
+# Q50
+select first_name,salary from worker where salary = (select max(salary) from worker);
  
  
  
